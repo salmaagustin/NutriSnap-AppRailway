@@ -1,0 +1,341 @@
+<!-- templates/landing.html -->
+{% extends "base.html" %} {% block title %}Beranda - NutriSnap{% endblock %} {% block content %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuToggle = document.getElementById('menuToggle')
+        const menuClose = document.getElementById('menuClose')
+        const mobileMenu = document.getElementById('mobileMenu')
+        const sections = document.querySelectorAll('section[id]')
+        const navLinks = document.querySelectorAll("nav a[href^='#']")
+        const navbar = document.getElementById('navbar')
+
+        // Langsung set warna navbar dan aktifkan link klasifikasi
+        navbar.classList.add('bg-[#C84C05]', 'shadow-md')
+
+        // Aktifkan link klasifikasi saat load halaman
+        navLinks.forEach((link) => {
+            const href = link.getAttribute('href').substring(1)
+            if (href === 'klasifikasi') {
+                link.classList.add('border-b-2', 'text-white')
+                link.classList.remove('text-white/70')
+            } else {
+                link.classList.remove('border-b-2', 'text-white')
+                link.classList.add('text-white/70')
+            }
+        })
+
+        function activateNavLink() {
+            let scrollY = window.pageYOffset
+            let currentSectionId = 'klasifikasi' // Default ke klasifikasi
+
+            // Jika scroll lebih dari 100px, cari section yang aktif
+            if (scrollY > 100) {
+                let minDistance = Infinity
+
+                sections.forEach((section) => {
+                    const sectionTop = section.offsetTop
+                    const distance = Math.abs(sectionTop - scrollY)
+
+                    if (distance < minDistance) {
+                        minDistance = distance
+                        currentSectionId = section.getAttribute('id')
+                    }
+                })
+            }
+
+            navLinks.forEach((link) => {
+                const href = link.getAttribute('href').substring(1)
+                if (href === currentSectionId) {
+                    link.classList.add('border-b-2', 'text-white')
+                    link.classList.remove('text-white/70')
+                } else {
+                    link.classList.remove('border-b-2', 'text-white')
+                    link.classList.add('text-white/70')
+                }
+            })
+        }
+
+        window.addEventListener('scroll', activateNavLink)
+        activateNavLink() // Panggil saat load halaman
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden')
+        })
+
+        menuClose.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden')
+        })
+
+        // Tutup menu saat klik di luar sidebar
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target === mobileMenu) {
+                mobileMenu.classList.add('hidden')
+            }
+        })
+
+        // Tutup menu saat salah satu link mobile diklik
+        document.querySelectorAll('.mobile-nav-link').forEach((link) => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden')
+            })
+        })
+    })
+</script>
+
+<header id="navbar" class="text-white py-4 px-6 fixed top-0 left-0 w-full z-50 bg-[#C84C05] shadow-md">
+    <div class="flex justify-between items-center max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold">NutriSnap</h1>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex gap-4">
+            {% for id, label in [('beranda', 'Beranda'), ('klasifikasi', 'Klasifikasi'), ('artikel', 'Artikel'), ('kalori', 'Kalori')] %}
+            <a href="{% if id == 'klasifikasi' %}{{ url_for('home') }}#klasifikasi{% else %}{{ url_for('home') }}#{{ id }}{% endif %}" class="inline-block px-2 py-1 font-bold min-w-[80px] transition-all duration-200 text-white/70 hover:text-white hover:border-b-2 hover:border-white {% if id == 'klasifikasi' %}border-b-2 text-white{% endif %}"> {{ label }} </a>
+            {% endfor %}
+        </nav>
+
+        <!-- Hamburger Button -->
+        <button id="menuToggle" class="md:hidden focus:outline-none z-[1000]">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+    </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="hidden fixed inset-0 bg-black bg-opacity-70 z-[999]">
+    <div class="bg-[#C84C05] w-64 h-full p-6 shadow-lg text-white relative">
+        <button id="menuClose" class="absolute top-4 right-4 text-2xl font-bold">✕</button>
+        <nav class="mt-12 flex flex-col space-y-4 text-lg">
+            {% for id, label in [('beranda', 'Beranda'), ('klasifikasi', 'Klasifikasi'), ('artikel', 'Artikel'), ('kalori', 'Kalori')] %}
+            <a href="{% if id == 'klasifikasi' %}{{ url_for('home') }}#klasifikasi{% else %}{{ url_for('home') }}#{{ id }}{% endif %}" class="inline-block px-2 py-1 font-bold min-w-[80px] transition-all duration-200 text-white/70 hover:text-white hover:border-b-2 hover:border-white {% if id == 'klasifikasi' %}border-b-2 text-white{% endif %}"> {{ label }} </a>
+            {% endfor %}
+        </nav>
+    </div>
+</div>
+
+<section class="min-h-screen">
+    <section class="bg-[#FFF7DD] w-full py-12 px-6 pt-32">
+        <!-- Tambah pt-32 untuk memberi ruang navbar -->
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Klasifikasi Makanan</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Ketahui jenis dan informasi nutrisi makanan melalui foto</p>
+        </div>
+    </section>
+
+    <div id="klasifikasi" class="py-2 px-4">
+        <!-- Upload -->
+        <div class="mb-8 text-center mt-12">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Pilih Foto</h3>
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 mb-4">
+                <img id="preview" style="display: none" class="mx-auto mb-4 max-h-[50vh]" />
+                <p id="no-image-text" class="text-gray-500">Tidak ada foto dipilih</p>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <div>
+                    <input type="file" accept="image/*" id="imageInput" class="hidden" />
+                    <label for="imageInput" class="border-2 border-[#C84C05] text-[#C84C05] hover:bg-[#FFF7DD] font-medium py-2 px-6 rounded-lg cursor-pointer transition duration-300 inline-block w-full text-center">Pilih dari Galeri</label>
+                </div>
+                <button onclick="captureImage()" class="border-2 border-[#C84C05] text-[#C84C05] hover:bg-[#FFF7DD] font-medium py-2 px-6 rounded-lg transition duration-300 w-full sm:w-auto text-center">Ambil Foto</button>
+            </div>
+        </div>
+
+        <!-- Kamera -->
+        <div id="camera-section" class="mb-8 text-center" style="display: none">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Kamera</h3>
+            <video id="camera-stream" autoplay class="mx-auto mb-4 w-full max-h-[50vh]"></video>
+            <button onclick="takePicture()" class="bg-[#C84C05] hover:bg-[#B04304] text-white font-medium py-2 px-6 rounded-lg transition duration-300 w-full sm:w-auto">Ambil Gambar</button>
+        </div>
+        <canvas id="camera-canvas" width="224" height="224" style="display: none"></canvas>
+
+        <!-- Tombol Unggah -->
+        <div class="text-center mt-8">
+            <button onclick="uploadImage()" class="bg-[#C84C05] hover:bg-[#B04304] text-white font-medium py-2.5 px-7 rounded-lg transition duration-300 text-base w-full sm:w-auto">Unggah Foto</button>
+        </div>
+
+        <!-- Hasil -->
+        <div id="results" class="mt-12" style="display: none">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Hasil Klasifikasi</h3>
+            <div class="bg-gray-50 rounded-lg p-6">
+                <div id="result" class="text-lg text-gray-800 mb-4">-</div>
+                <img id="result-image" style="display: none" class="mx-auto mt-4 max-h-[50vh]" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const imageInput = document.getElementById('imageInput')
+    const preview = document.getElementById('preview')
+    const noImageText = document.getElementById('no-image-text')
+    const resultDiv = document.getElementById('result')
+    const resultImage = document.getElementById('result-image')
+    const resultsSection = document.getElementById('results')
+    const cameraSection = document.getElementById('camera-section')
+    const video = document.getElementById('camera-stream')
+    const canvas = document.getElementById('camera-canvas')
+    const ctx = canvas.getContext('2d')
+
+    let stream = null
+    let currentImageBlob = null
+    let currentImageForUpload = null
+
+    function clearAll() {
+        preview.src = ''
+        preview.style.display = 'none'
+        noImageText.style.display = 'block'
+        imageInput.value = ''
+        resultImage.src = ''
+        resultImage.style.display = 'none'
+        resultsSection.style.display = 'none'
+
+        if (currentImageBlob) {
+            URL.revokeObjectURL(currentImageBlob)
+            currentImageBlob = null
+        }
+        currentImageForUpload = null
+    }
+
+    imageInput.addEventListener('change', () => {
+        const file = imageInput.files[0]
+        if (file) {
+            if (stream) {
+                stream.getTracks().forEach((track) => track.stop())
+                stream = null
+                cameraSection.style.display = 'none'
+            }
+
+            clearAll()
+
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                if (currentImageBlob) {
+                    URL.revokeObjectURL(currentImageBlob)
+                }
+
+                preview.src = e.target.result
+                preview.style.display = 'block'
+                noImageText.style.display = 'none'
+                currentImageBlob = e.target.result
+                currentImageForUpload = file
+            }
+            reader.readAsDataURL(file)
+        }
+    })
+
+    function captureImage() {
+        clearAll()
+        cameraSection.style.display = 'block'
+
+        if (stream) {
+            stream.getTracks().forEach((track) => track.stop())
+        }
+
+        navigator.mediaDevices
+            .getUserMedia({
+                video: {
+                    facingMode: 'environment',
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                }
+            })
+            .then((newStream) => {
+                stream = newStream
+                video.srcObject = stream
+            })
+            .catch((err) => {
+                alert('Tidak bisa akses kamera: ' + err.message)
+            })
+    }
+
+    function takePicture() {
+        if (!stream) return
+
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+        stream.getTracks().forEach((track) => track.stop())
+        stream = null
+        cameraSection.style.display = 'none'
+
+        canvas.toBlob(
+            (blob) => {
+                if (currentImageBlob) {
+                    URL.revokeObjectURL(preview.src)
+                }
+
+                const imageUrl = URL.createObjectURL(blob)
+                preview.src = imageUrl
+                preview.style.display = 'block'
+                noImageText.style.display = 'none'
+                currentImageBlob = imageUrl
+                currentImageForUpload = blob
+            },
+            'image/jpeg',
+            0.95
+        )
+    }
+
+    function uploadImage() {
+        if (!currentImageForUpload) {
+            alert('Pilih gambar atau ambil dari kamera dulu')
+            return
+        }
+
+        const formData = new FormData()
+
+        if (currentImageForUpload instanceof Blob) {
+            formData.append('image', currentImageForUpload, 'captured.jpg')
+        } else {
+            formData.append('image', currentImageForUpload)
+        }
+
+        processUpload(formData)
+    }
+
+    function processUpload(formData) {
+        resultDiv.innerHTML = "<span class='animate-pulse text-green-600'>Menganalisis makanan...</span>"
+        resultImage.style.display = 'none'
+        resultsSection.style.display = 'block'
+
+        fetch('/predict', {
+            method: 'POST',
+            body: formData
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok')
+                }
+                return response.json()
+            })
+            .then((data) => {
+                resultDiv.innerHTML = `
+                <div class="mb-4">
+                    <span class="font-bold text-xl">${data.class}</span>
+                    <span class="text-sm text-gray-500 ml-2">(${(data.confidence * 100).toFixed(1)}% akurat)</span>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-2">Saran Penyajian Sehat:</h4>
+                    <p>${data.healthy_recipe}</p>
+                </div>
+                `
+                if (data.image_path) {
+                    resultImage.src = data.image_path + '?t=' + new Date().getTime()
+                    resultImage.style.display = 'block'
+                }
+                resultsSection.scrollIntoView({ behavior: 'smooth' })
+            })
+            .catch((error) => {
+                console.error('Error:', error)
+                resultDiv.innerHTML = `
+                    <div class="text-red-500">
+                        <p>Gagal menganalisis gambar. Silakan coba lagi.</p>
+                        <p class="text-sm">${error.message}</p>
+                    </div>
+                `
+            })
+    }
+</script>
+{% endblock %}

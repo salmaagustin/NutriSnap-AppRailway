@@ -1,0 +1,42 @@
+# ====== Python Virtual Environment ======
+venv/
+myenv/
+env/
+ENV/
+
+# ====== Python Cache ======
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ====== Dataset / Large Data (tidak perlu diupload ke Railway) ======
+dataset/
+data/
+*.csv
+*.tsv
+*.zip
+*.tar.gz
+
+# ====== Flask Specific ======
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# ====== Logs ======
+*.log
+
+# ====== Jupyter Notebook checkpoints ======
+.ipynb_checkpoints
+
+# ====== Build / Packaging ======
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ====== System / Editor Files ======
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,115 @@
+<!-- templates/landing.html -->
+{% extends "base.html" %} {% block title %}Beranda - NutriSnap{% endblock %} {% block content %}
+        {% include 'includes/navbar.html' %}
+
+
+<section class="bg-white">
+    <!-- Hero Image -->
+<div id="beranda" class="h-svh bg-cover bg-center flex items-center justify-center " style="background-image: url('{{ url_for('static', filename='images/Header.png') }}');">
+    <div class="bg-black bg-opacity-50 h-screen w-full flex items-center justify-center ">
+        <div class="text-center px-4 md:px-0">
+            <h2 class="text-4xl text-white font-bold mb-2">Kenali Makananmu, Wujudkan Hidup Sehat</h2>
+            <h6 class="text-white">Langkah kecil untuk pola makan lebih sehat dan gaya hidup yang lebih seimbang</h6>
+        </div>
+    </div>
+</div>
+<!-- Hero Image End -->
+    <!-- Klasifikasi section -->
+    <section id="klasifikasi" class="bg-white py-12 px-6 flex items-center justify-center scroll-mt-20 md:scroll-mt-10 ">
+        <div class="container mx-auto">
+            <!-- Grid 3 Kolom di Desktop, 1 Kolom di Mobile -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+                <div class="p-6 flex flex-col items-start text-left">
+                    <h3 class="text-xl font-semibold mb-4 text-[#C84C05]">Apa Itu Pola Hidup Sehat?</h3>
+                    <p class="text-gray-600 mb-6">Pola hidup sehat dimulai dari pilihan makan yang tepat. NutriSnap bantu kenali makanan agar asupan harian lebih bijak</p>
+                </div>
+                <div class="p-6 flex flex-col items-center text-center">
+                    <img src="{{ url_for('static', filename='images/Sayur.png') }}" alt="Sayur" class="w-100 h-100 mb-4" />
+                </div>
+                <div class="p-6 flex flex-col items-end text-right">
+                    <h3 class="text-xl font-semibold mb-4 text-[#C84C05]">Manfaat Pola Makan Sehat</h3>
+                    <p class="text-gray-600 mb-6">Pola makan seimbang bantu tubuh lebih bertenaga, kurangi risiko penyakit, dan tingkatkan kualitas hidup</p>
+                </div>
+            </div>
+            <!-- Tombol Global di Bawah -->
+            <div class="flex justify-center mt-5">
+                <a href="{{ url_for('klasifikasi') }}" class="bg-[#C84C05] hover:bg-[#933804] text-white font-bold py-3 px-8 rounded-lg transition duration-300"> Yuk Mulai Klasifikasi </a>
+            </div>
+        </div>
+    </section>
+    
+<section id="artikel" class="bg-white py-12 px-6 flex items-center justify-center scroll-mt-20 md:scroll-mt-10">
+    <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-4 text-[#55603F]">Artikel Kesehatan</h2>
+        <p class="text-lg text-center mb-10 text-[#626F47]">Dapatkan informasi kesehatan terbaru dan tips untuk hidup lebih sehat.</p>
+
+        <!-- Grid 3 Kolom di Desktop, 1 Kolom di Mobile -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div class="bg-white border rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-4 text-[#626F47]">7 Tips Menerapkan Pola Makan Sehat yang Mudah Dilakukan</h3>
+                <p class="text-gray-600 mb-4 italic">Sumber: Halodoc.</p>
+                <a href="https://www.halodoc.com/artikel/7-tips-menerapkan-pola-makan-sehat-yang-mudah-dilakukan?srsltid=AfmBOoqmW7vkeNJBXD8WGGRnsXvx6la09u1bwmBz5v5L0707qu_qI2Ap" 
+                class="text-[#C84C05] hover:underline"
+                target="_blank" rel="noopener noreferrer">Baca Selengkapnya</a>
+            </div>
+            <!-- Card 2 -->
+            <div class="bg-white border rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-4 text-[#626F47]">Mengelola Pola Makan Sehat di Tengah Rutinitas Sibuk</h3>
+                <p class="text-gray-600 mb-4 italic">Sumber: Kementrian Kesehatan.</p>
+                <a href="https://keslan.kemkes.go.id/view_artikel/4046/mengelola-pola-makan-sehat-di-tengah-rutinitas-sibuk" 
+                class="text-[#C84C05] hover:underline"
+                target="_blank" rel="noopener noreferrer">Baca Selengkapnya</a>
+            </div>
+            <!-- Card 3 -->
+            <div class="bg-white border rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-4 text-[#626F47]">9 Langkah Mudah Memulai Pola Hidup Sehat Sehari-Hari</h3>
+                <p class="text-gray-600 mb-4 italic">Sumber: RS Siloam</p>
+                <a href="https://www.siloamhospitals.com/informasi-siloam/artikel/pola-hidup-sehat" 
+                class="text-[#C84C05] hover:underline"
+                target="_blank" rel="noopener noreferrer">Baca Selengkapnya</a>
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- Artikel kesehatan v2 End section -->
+
+        <!-- Pentingnya Menjaga Asupan Kalori section -->
+        <section id="kalori" class="mt-10 scroll-mt-20 md:scroll-mt-24">
+            <div class="w-full mx-auto text-center">
+                <div class="gap-6">
+                <h2 class="text-3xl font-bold text-center mb-4 text-[#55603F]">Menjaga Asupan Kalori</h2>
+                <p class="text-lg text-center mb-20 text-[#626F47]">Jagalah asupan kalori dalam tubuh anda demi meningkatkan kualitas hidup anda</p>
+
+                <div class="relative bg-yellow-100 py-12 rounded-lg overflow-visible">
+                    <div class="grid grid-cols-1 md:grid-cols-3 items-start justify-items-center px-4 -mt-20">
+                        <!-- Card 1 -->
+                        <div class="flex flex-col items-center text-center mb-10">
+                            <img src="/static/images/lauk_sayur.png" alt="Lauk dan Sayur" class="w-40 h-40 object-cover rounded-full shadow-md mb-4" />
+                            <h3 class="font-semibold text-green-900 mb-2">Daftar Kalori Lauk dan Sayur</h3>
+                            <a href="/kalori?kategori=lauk_sayur" class="bg-[#C84C05] hover:bg-[#933804] text-white font-semibold py-2 px-4 rounded-full transition duration-300">Selengkapnya</a>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="flex flex-col items-center text-center mb-10">
+                            <img src="/static/images/makanan_pokok.png" alt="Makanan Pokok" class="w-40 h-40 object-cover rounded-full shadow-md mb-4" />
+                            <h3 class="font-semibold text-green-900 mb-2">Daftar Kalori Makanan Pokok</h3>
+                            <a href="/kalori?kategori=makanan_pokok" class="bg-[#C84C05] hover:bg-[#933804] text-white font-semibold py-2 px-4 rounded-full transition duration-300">Selengkapnya</a>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="flex flex-col items-center text-center mb-10">
+                            <img src="/static/images/buah_buah.png" alt="Buah-Buahan" class="w-40 h-40 object-cover rounded-full shadow-md mb-4" />
+                            <h3 class="font-semibold text-green-900 mb-2">Daftar Kalori Buah-Buah</h3>
+                            <a href="/kalori?kategori=buah_buahan" class="bg-[#C84C05] hover:bg-[#933804] text-white font-semibold py-2 px-4 rounded-full transition duration-300">Selengkapnya</a>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+            </div>
+        </section>
+        <!--  Pentingnya Menjaga Asupan Kalori end section -->
+        {% endblock %}
+    </section>
+</section>

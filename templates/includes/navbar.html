@@ -1,0 +1,119 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuToggle = document.getElementById('menuToggle')
+        const menuClose = document.getElementById('menuClose')
+        const mobileMenu = document.getElementById('mobileMenu')
+        const sections = document.querySelectorAll('section[id]')
+        const navLinks = document.querySelectorAll("nav a[href^='#']")
+
+        function activateNavLink() {
+            let scrollY = window.pageYOffset
+
+            if (scrollY < 100) {
+                navLinks.forEach((link) => {
+                    const href = link.getAttribute('href').substring(1)
+                    if (href === 'beranda') {
+                        link.classList.add('border-b-2', 'text-white')
+                        link.classList.remove('text-white/70')
+                    } else {
+                        link.classList.remove('border-b-2', 'text-white')
+                        link.classList.add('text-white/70')
+                    }
+                })
+                return
+            }
+
+            let currentSectionId = null
+            let minDistance = Infinity
+
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop
+                const distance = Math.abs(sectionTop - scrollY)
+
+                if (distance < minDistance) {
+                    minDistance = distance
+                    currentSectionId = section.getAttribute('id')
+                }
+            })
+
+            navLinks.forEach((link) => {
+                const href = link.getAttribute('href').substring(1)
+
+                if (href === currentSectionId) {
+                    link.classList.add('border-b-2', 'text-white')
+                    link.classList.remove('text-white/70')
+                } else {
+                    link.classList.remove('border-b-2', 'text-white')
+                    link.classList.add('text-white/70')
+                }
+            })
+        }
+
+        window.addEventListener('scroll', activateNavLink)
+        activateNavLink() // 👉 panggil saat load halaman
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden')
+        })
+
+        menuClose.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden')
+        })
+
+        // Tutup menu saat klik di luar sidebar
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target === mobileMenu) {
+                mobileMenu.classList.add('hidden')
+            }
+        })
+
+        // Tutup menu saat salah satu link mobile diklik
+        document.querySelectorAll('.mobile-nav-link').forEach((link) => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden')
+            })
+        })
+
+        // Scroll effect (ubah warna navbar)
+        const navbar = document.getElementById('navbar')
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 10) {
+                navbar.classList.add('bg-[#C84C05]', 'shadow-md')
+                navbar.classList.remove('bg-transparent')
+            } else {
+                navbar.classList.remove('bg-[#C84C05]', 'shadow-md')
+                navbar.classList.add('bg-transparent')
+            }
+        })
+    })
+</script>
+
+<header id="navbar" class="text-white py-4 px-6 fixed top-0 left-0 w-full transition-all duration-300 bg-transparent z-50">
+    <div class="flex justify-between items-center max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold">NutriSnap</h1>
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex gap-4">
+            {% for id, label in [('beranda', 'Beranda'), ('klasifikasi', 'Klasifikasi'), ('artikel', 'Artikel'), ('kalori', 'Kalori')] %}
+            <a href="#{{ id }}" class="inline-block px-2 py-1 font-bold min-w-[80px] transition-all duration-200 text-white/70 hover:text-white hover:border-b-2 hover:border-white"> {{ label }} </a>
+            {% endfor %}
+        </nav>
+        <!-- Hamburger Button -->
+        <button id="menuToggle" class="md:hidden focus:outline-none z-[1000]">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+    </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="hidden fixed inset-0 bg-black bg-opacity-70 z-[999]">
+    <div class="bg-[#C84C05] w-64 h-full p-6 shadow-lg text-white relative">
+        <button id="menuClose" class="absolute top-4 right-4 text-2xl font-bold">✕</button>
+        <nav class="mt-12 flex flex-col space-y-4 text-lg">
+            {% for id, label in [('beranda', 'Beranda'), ('klasifikasi', 'Klasifikasi'), ('artikel', 'Artikel'), ('kalori', 'Kalori')] %}
+            <a href="#{{ id }}" class="text-white font-medium hover:font-bold mobile-nav-link">{{ label }}</a>
+            {% endfor %}
+        </nav>
+    </div>
+</div>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Klasifikasi Makanan</title>
+        <style>
+            body {
+                font-family: Arial;
+                text-align: center;
+                padding: 20px;
+            }
+            #preview,
+            #result-image,
+            #camera-stream {
+                max-width: 300px;
+                margin-top: 10px;
+                border-radius: 12px;
+            }
+            button,
+            input[type='file'] {
+                margin-top: 10px;
+                padding: 10px;
+                border-radius: 10px;
+                border: none;
+                cursor: pointer;
+            }
+            #result {
+                margin-top: 20px;
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Klasifikasi Makanan</h1>
+
+        <!-- Upload dari file -->
+        <input type="file" accept="image/*" id="imageInput" />
+        <br />
+        <img id="preview" style="display: none" />
+        <br />
+        <button onclick="uploadImage()">Upload Gambar</button>
+
+        <hr />
+
+        <!-- Kamera langsung -->
+        <video id="camera-stream" autoplay></video><br />
+        <button onclick="captureImage()">Ambil Foto</button><br />
+        <canvas id="camera-canvas" width="224" height="224" style="display: none"></canvas>
+
+        <h3>Hasil Klasifikasi:</h3>
+        <div id="result">-</div>
+        <img id="result-image" style="display: none" />
+
+        <script>
+            const imageInput = document.getElementById('imageInput')
+            const preview = document.getElementById('preview')
+            const resultDiv = document.getElementById('result')
+            const resultImage = document.getElementById('result-image')
+
+            let capturedBlob = null // ⬅️ simpan gambar hasil kamera di sini
+
+            imageInput.addEventListener('change', () => {
+                const file = imageInput.files[0]
+                capturedBlob = null // reset jika pengguna pilih gambar manual
+                if (file) {
+                    const reader = new FileReader()
+                    reader.onload = (e) => {
+                        preview.src = e.target.result
+                        preview.style.display = 'block'
+                    }
+                    reader.readAsDataURL(file)
+                }
+            })
+
+            function uploadImage() {
+                const formData = new FormData()
+                let file = imageInput.files[0]
+
+                if (capturedBlob) {
+                    // Jika gambar berasal dari kamera
+                    formData.append('image', capturedBlob, 'webcam.jpg')
+                } else if (file) {
+                    // Jika gambar berasal dari input file
+                    formData.append('image', file)
+                } else {
+                    alert('Pilih gambar atau ambil dari kamera dulu')
+                    return
+                }
+
+                resultDiv.innerHTML = 'Loading...'
+                resultImage.style.display = 'none'
+
+                fetch('/predict', { method: 'POST', body: formData })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        resultDiv.innerHTML = `<b>${data.class}</b><br>${data.healthy_recipe}`
+                        if (data.image_path) {
+                            resultImage.src = data.image_path
+                            resultImage.style.display = 'block'
+                        }
+                    })
+                    .catch((err) => {
+                        resultDiv.innerHTML = 'Terjadi error!'
+                        console.error(err)
+                    })
+            }
+
+            // Kamera
+            const video = document.getElementById('camera-stream')
+            const canvas = document.getElementById('camera-canvas')
+            const ctx = canvas.getContext('2d')
+
+            navigator.mediaDevices
+                .getUserMedia({ video: true })
+                .then((stream) => (video.srcObject = stream))
+                .catch((err) => alert('Tidak bisa akses kamera'))
+
+            function captureImage() {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+                canvas.toBlob((blob) => {
+                    capturedBlob = blob // simpan untuk uploadImage()
+                    preview.src = URL.createObjectURL(blob)
+                    preview.style.display = 'block'
+                    imageInput.value = '' // reset input file biar gak keambil file lama
+                }, 'image/jpeg')
+            }
+        </script>
+    </body>
+</html>

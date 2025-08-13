@@ -1,0 +1,202 @@
+<!-- templates/kalori.html -->
+{% extends "base.html" %} {% block title %}Kalori Makanan - NutriSnap{% endblock %} {% block content %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuToggle = document.getElementById('menuToggle')
+        const menuClose = document.getElementById('menuClose')
+        const mobileMenu = document.getElementById('mobileMenu')
+        const sections = document.querySelectorAll('section[id]')
+        const navLinks = document.querySelectorAll("nav a[href^='#']")
+        const navbar = document.getElementById('navbar')
+
+        // Tambah warna navbar saat load
+        navbar.classList.add('bg-[#C84C05]', 'shadow-md')
+
+        // Default aktif di kalori
+        let currentSectionId = 'kalori'
+
+        // Fungsi untuk update menu aktif saat scroll
+        function activateNavLink() {
+            let scrollY = window.pageYOffset
+            let minDistance = Infinity
+
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop
+                const distance = Math.abs(sectionTop - scrollY)
+                if (distance < minDistance) {
+                    minDistance = distance
+                    currentSectionId = section.getAttribute('id')
+                }
+            })
+
+            navLinks.forEach((link) => {
+                const href = link.getAttribute('href').substring(1)
+                if (href === currentSectionId) {
+                    link.classList.add('border-b-2', 'text-white', 'font-bold')
+                    link.classList.remove('text-white/70')
+                } else {
+                    link.classList.remove('border-b-2', 'text-white', 'font-bold')
+                    link.classList.add('text-white/70')
+                }
+            })
+        }
+
+        window.addEventListener('scroll', activateNavLink)
+        activateNavLink()
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden')
+        })
+
+        menuClose.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden')
+        })
+
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target === mobileMenu) {
+                mobileMenu.classList.add('hidden')
+            }
+        })
+
+        document.querySelectorAll('.mobile-nav-link').forEach((link) => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden')
+            })
+        })
+    })
+</script>
+
+<header id="navbar" class="text-white py-4 px-6 fixed top-0 left-0 w-full z-50 bg-[#C84C05] shadow-md">
+    <div class="flex justify-between items-center max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold">NutriSnap</h1>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex gap-4">
+            {% for id, label in [('beranda', 'Beranda'), ('klasifikasi', 'Klasifikasi'), ('artikel', 'Artikel'), ('kalori', 'Kalori')] %}
+            <a href="{% if id == 'kalori' %}{{ url_for('home') }}#kalori{% else %}{{ url_for('home') }}#{{ id }}{% endif %}" class="inline-block px-2 py-1 font-bold min-w-[80px] transition-all duration-200 text-white/70 hover:text-white hover:border-b-2 hover:border-white {% if id == 'kalori' %}border-b-2 text-white{% endif %}"> {{ label }} </a>
+            {% endfor %}
+        </nav>
+
+        <!-- Hamburger Button -->
+        <button id="menuToggle" class="md:hidden focus:outline-none z-[1000]">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+    </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="hidden fixed inset-0 bg-black bg-opacity-70 z-[999]">
+    <div class="bg-[#C84C05] w-64 h-full p-6 shadow-lg text-white relative">
+        <button id="menuClose" class="absolute top-4 right-4 text-2xl font-bold">✕</button>
+        <nav class="mt-12 flex flex-col space-y-4 text-lg">
+            {% for id, label in [('beranda', 'Beranda'), ('klasifikasi', 'Klasifikasi'), ('artikel', 'Artikel'), ('kalori', 'Kalori')] %}
+            <a href="{% if id == 'kalori' %}{{ url_for('home') }}#kalori{% else %}{{ url_for('home') }}#{{ id }}{% endif %}" class="text-white font-medium hover:font-bold mobile-nav-link {% if id == 'kalori' %}font-bold{% endif %}"> {{ label }} </a>
+            {% endfor %}
+        </nav>
+    </div>
+</div>
+
+<section>
+    <section id="kalori" class="bg-[#FFF7DD] w-full py-12 px-6 pt-32">
+        <!-- Tambah pt-32 untuk memberi ruang navbar -->
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Menjaga Asupan Kalori</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Menjaga asupan kalori dalam tubuh Anda demi meningkatkan kualitas hidup. Ketahui nilai kalori dari berbagai jenis makanan untuk membantu Anda merencanakan pola makan yang lebih sehat dan seimbang.</p>
+        </div>
+    </section>
+
+    <div class="py-8 px-4">
+        <!-- Tambahkan ini untuk menampilkan judul kategori -->
+        <div id="kategori-title" class="text-center mb-6">
+            <h3 class="text-2xl font-bold text-gray-800" id="kategori-name"></h3>
+        </div>
+        <!-- Tempat render tabel -->
+        <div id="lauk-sayur" class="tab-content hidden"></div>
+        <div id="makanan-pokok" class="tab-content hidden"></div>
+        <div id="buah-buahan" class="tab-content hidden"></div>
+
+        <div class="text-center mt-8">
+            <p class="text-sm text-gray-500">
+                Sumber data:
+                <a href="https://www.mymealcatering.com/kesehatan/tabel-kalori-makanan-dan-minuman.html" target="_blank" class="text-[#C84C05] hover:underline"> MyMeal Catering </a>
+            </p>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Fungsi render tabel
+    function renderTable(data, containerId) {
+        const container = document.getElementById(containerId)
+        let html = `
+        <div class="overflow-x-auto bg-white rounded-lg shadow-md mb-12">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-[#C84C05] text-white">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-bold uppercase">No</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold uppercase">Jenis Makanan</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold uppercase">Takaran</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold uppercase">Kalori (kkal)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+        `
+        data.forEach((item, index) => {
+            html += `
+                <tr class="${index % 2 === 1 ? 'bg-gray-50' : ''}">
+                    <td class="px-6 py-4 whitespace-nowrap">${index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${item.nama}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${item.satuan}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${item.kalori}</td>
+                </tr>
+            `
+        })
+        html += `</tbody></table></div>`
+        container.innerHTML = html
+    }
+
+    // Fungsi untuk ambil query parameter dari URL
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search)
+        return urlParams.get(param)
+    }
+
+    // Jalankan setelah data dimuat
+    // Jalankan setelah data dimuat
+    fetch('/static/data/data_kalori.json')
+        .then((res) => res.json())
+        .then((data) => {
+            renderTable(data['lauk_sayur'], 'lauk-sayur')
+            renderTable(data['makanan_pokok'], 'makanan-pokok')
+            renderTable(data['buah_buahan'], 'buah-buahan')
+
+            // Cek parameter kategori dan tampilkan yang sesuai
+            const kategori = getQueryParam('kategori') || 'lauk_sayur'
+            const tabMap = {
+                lauk_sayur: {
+                    id: 'lauk-sayur',
+                    name: 'Lauk Pauk & Sayuran'
+                },
+                makanan_pokok: {
+                    id: 'makanan-pokok',
+                    name: 'Makanan Pokok'
+                },
+                buah_buahan: {
+                    id: 'buah-buahan',
+                    name: 'Buah-buahan'
+                }
+            }
+
+            const selectedTab = tabMap[kategori]
+            if (selectedTab) {
+                document.getElementById(selectedTab.id).classList.remove('hidden')
+                // Tampilkan nama kategori
+                document.getElementById('kategori-name').textContent = selectedTab.name
+            }
+        })
+</script>
+
+{% endblock %}
